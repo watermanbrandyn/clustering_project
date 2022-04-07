@@ -13,6 +13,7 @@ from scipy.stats import pearsonr
 
 # Sklearn
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.cluster import KMeans
 
 
 def linear_tests(train, conts, target):
@@ -99,3 +100,42 @@ def scale_zillow(train, validate, test, quants):
     test[quants] = scaler.transform(test[quants])
     # Return the three scaled dataframes
     return train, validate, test
+
+
+def elbow_test(train, cols):
+    '''
+    This function takes our train dataframe and a list of columns and outputs a graph to show visualize the best k value for clustering.
+    '''
+    # Creating our cluster groups and finding the intertia values of each
+    X = train[cols]
+    # Creation of dictionary to hold outputs
+    inertias = {}
+    for k in range(2, 11):
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(X)
+        inertias[k] = kmeans.inertia_
+    # Plotting the intertias to see optimal k value (number of clusteres)
+    pd.Series(inertias).plot(xlabel='k', ylabel='Inertia', figsize=(13,7))
+    plt.grid()
+
+
+def clustering_cols(train, validate, test, cols, k, name):
+    '''
+    This function takes in our train dataframe, a list of columns to cluster, a k value (obtained from elbow test), and a string.
+    It creates a KMeans cluster, adds the predictions to the train dataframe using the name string, and returns the centroids and train dataframe.
+    '''
+    # Creating our KMeans model with specified number of clusters and data
+    x = train[cols]
+    kmeans = KMeans(n_clusters=k).fit(x)
+    # Adding the cluster predictions as a column to our dataframe (train) and making category type
+    train[name] = kmeans.predict(x)
+    train[name] = train[name].astype('category')
+    # Adding clustered column to our validate and test dataframes as well
+    validate[name] = kmeans.predict(validate[cols])
+    validate[name] = validate[name].astype('category')
+    test[name] = kmeans.predict(test[cols])
+    test[name] = test[name].astype('category')
+    # Figure out where our centroids are for graphing
+    centroids = pd.DataFrame(kmeans.cluster_centers_, columns=x.columns)
+    return centroids, train, validate, test
+
