@@ -47,12 +47,12 @@ def baseline_selection(y_train, y_validate):
     rmse_train_m = mean_squared_error(y_train.logerror, y_train.pred_mean)**(1/2)
     rmse_validate_m = mean_squared_error(y_validate.logerror, y_validate.pred_mean)**(1/2)
     # Taking the average of our train and validate analysis
-    mean_RMSE = round((rmse_train_m + rmse_validate_m) / 2, 2)
+    mean_RMSE = round((rmse_train_m + rmse_validate_m) / 2, 6)
     # Evaluating RMSE value for median baseline
     rmse_train = mean_squared_error(y_train.logerror, y_train.pred_median)**(1/2)
     rmse_validate = mean_squared_error(y_validate.logerror, y_validate.pred_median)**(1/2)
     # Taking the average of our train and validate analysis
-    median_RMSE = round((rmse_train + rmse_validate) / 2, 2)
+    median_RMSE = round((rmse_train + rmse_validate) / 2, 6)
 
     # Determine which is better to use as baseline
     if mean_RMSE < median_RMSE:
@@ -72,10 +72,10 @@ def ols_model(x_train, y_train, x_validate, y_validate):
     lm.fit(x_train, y_train.logerror)
     # Prediction creation and RMSE value for train
     y_train['log_lm_pred'] = lm.predict(x_train)
-    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_lm_pred)**(1/2), 2)
+    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_lm_pred)**(1/2), 6)
     # Prediction creation and RMSE for validate
     y_validate['log_lm_pred'] = lm.predict(x_validate)
-    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_lm_pred)**(1/2), 2)
+    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_lm_pred)**(1/2), 6)
     # Outputing the RMSE values
     print("RMSE for OLS using LinearRegression\nTraining: ", rmse_train,
             "\nValidation: ", rmse_validate)
@@ -90,13 +90,40 @@ def LassoLars_model(x_train, y_train, x_validate, y_validate):
     lars.fit(x_train, y_train.logerror)
     # Prediction creation and RMSE value for train
     y_train['log_pred_lars'] = lars.predict(x_train)
-    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_pred_lars)**(1/2), 2)
+    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_pred_lars)**(1/2), 6)
     # Prediction creation and RMSE value for validate
     y_validate['log_pred_lars'] = lars.predict(x_validate)
-    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_pred_lars)**(1/2), 2)
+    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_pred_lars)**(1/2), 6)
     # Outputing the RMSE values
     print("RMSE for Lasso + Lars\nTraining: ", rmse_train,
      "\nValidation: ", rmse_validate)
+
+
+def Poly_reg_model(x_train, y_train, x_validate, y_validate, d):
+    '''
+    This function takes in our x and y components for train and validate and prints the results of RMSE for train and validate modeling.
+    '''
+    # Creation of polynomial model
+    pf = PolynomialFeatures(degree=d, interaction_only=True)
+    # Fitting on x_train and transforming on all dataframes
+    x_train_degree = pf.fit_transform(x_train)
+    x_validate_degree = pf.transform(x_validate)
+    #x_test_degree = pf.transform(x_test)
+    # Creating the LinearRegression model to use the polynomial data
+    lm2 = LinearRegression(normalize=True)
+    # Fitting on the polynomial data
+    lm2.fit(x_train_degree, y_train.logerror)
+    y_train['log_pred_lm_deg'] = lm2.predict(x_train_degree)
+    # Calculating the RMSE value
+    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_pred_lm_deg)**(1/2), 6)
+    # Doing the above work with the validate
+    y_validate['log_pred_lm_deg'] = lm2.predict(x_validate_degree)
+    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_pred_lm_deg)**(1/2), 6)
+    # Print and comparison of RMSE value for train and validate outcomes
+    print("RMSE for Polynomial Model, with two degrees\nTraining: ", rmse_train,
+     "\nValidation: ", rmse_validate)
+
+
 
 
 def Tweedie_model(x_train, y_train, x_validate, y_validate, x_test, y_test):
@@ -104,19 +131,19 @@ def Tweedie_model(x_train, y_train, x_validate, y_validate, x_test, y_test):
     This function takes in our x and y components for train, validate and test and prints the results of RMSE for all three models. 
     '''
     # Creation and fitting of the model
-    glm = TweedieRegressor(power=1, alpha=0)
+    glm = TweedieRegressor(power=0, alpha=0)
     glm.fit(x_train, y_train.logerror)
     # Prediction creation and RMSE value for train
     y_train['log_pred_glm'] = glm.predict(x_train)
-    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_pred_glm)**(1/2), 2)
+    rmse_train = round(mean_squared_error(y_train.logerror, y_train.log_pred_glm)**(1/2), 6)
     # Prediction creation and RMSE value for validate
     y_validate['log_pred_glm'] = glm.predict(x_validate)
-    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_pred_glm)**(1/2), 2)
+    rmse_validate = round(mean_squared_error(y_validate.logerror, y_validate.log_pred_glm)**(1/2), 6)
     # Prediction creation and RMSE value for test
     y_test['log_pred_glm'] = glm.predict(x_test)
-    rmse_test = round(mean_squared_error(y_test.logerror, y_test.log_pred_glm)**(1/2), 2)
+    rmse_test = round(mean_squared_error(y_test.logerror, y_test.log_pred_glm)**(1/2), 6)
     # Outputing the RMSE values
-    print("RMSE using Tweedie, power=1 & alpha=0\nTraining: ", rmse_train,
+    print("RMSE using Tweedie, power=0 & alpha=0\nTraining: ", rmse_train,
      "\nValidation: ", rmse_validate,
      "\nTest: ", rmse_test)
 
@@ -125,7 +152,7 @@ def residual_visual(y_test):
     '''
     This function takes the y component of our test dataframe and outputs the Residual results from the predicted and actual values. 
     '''
-    plt.figure(figsize=(16,8))
+    plt.figure(figsize=(12,5))
     plt.axhline(y=0, ls = ':')
     plt.scatter(y_test.logerror, y_test.log_pred_glm - y_test.logerror,
            alpha=.5, color='red')
