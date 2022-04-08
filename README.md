@@ -11,6 +11,7 @@
       - [Acquire](#acquire)
       - [Preparation and Splitting](#preparation-and-splitting)
   - [Exploration](#exploration)
+  - [Clustering](#clustering)
   - [Modeling](#modeling)
   - [Deliverables](#deliverables)
     - [Final Report](#final-report)
@@ -36,7 +37,7 @@ To reproduce the outcomes in this project:
 4. Be able to run the 'Final Report' jupyter notebook file. 
    - Supplemental workbooks may also be useful in identifying some of the steps taken prior to the cleaner final code 
 
-## Initial Questions -- NOT DONE
+## Initial Questions 
 _Initial Data Centric Questions_
 1. Do primary house attributes impact log error? (bedrooms, bathrooms, age, squarefeet)
 2. Do secondary house attributes impact log error? (num_fireplace, threequarter_baths, hottub_or_spa, has_pool)
@@ -47,7 +48,7 @@ _Initial Data Centric Questions_
     - Continuous feature clustering
 5. What can we identify about the data when log error is positive or negative?
 
-_Initial Hypotheses_ -- NOT DONE
+_Initial Hypotheses_ 
 1. Is there a linear relationship between log error and our continuous features? (Pearsonr)
 2. Is there a difference in the mean log error for selected subsets and the entire dataset? (one-sample t-test)
 3. Is there a difference in the mean log error of particular zip codes and the entire dataset? (one-sample t-test)
@@ -91,10 +92,26 @@ The wrangle_zillow.py file contains the code that was used for acquiring the Zil
 #### Preparation and Splitting
 The wrangle_zillow.py file contains the code that was used for preparing the data. The **prepare_zillow()** function takes the acquired dataframe and cleans it for our exploratory purposes. To accomplish this a number of functions from the module are used. Nulls and missing values are identified and removed or imputed as necessary. Outliers are removed to make our work more widely usable, and columns are modified to their appropriate data types or formats. Our intitial dataframe is then split into train, validate, and test splits. 
 
-### Exploration -- NOT DONE
-For exploration we used only our train dataframe. The explore.py file contains a number of functions that were used to help gain insights into our data, using both visual and statistical methods. We delved out the key factors shown to impact tax value and our train, validate, and test dataframes only include these features. The main takeaways from exploration are that tax value is influenced by:
+### Exploration
+For exploration we used only our train dataframe. The explore.py file contains a number of functions that were used to help gain insights into our data, using both visual and statistical methods. We delved out the key factors shown to impact log error and our train, validate, and test dataframes only include these features. 
 
-However, the biggest issue found with the Zillow data generally is that a lot of features that could possibly be deemed important were full of too many nulls to be useful in this project.
+#### Clustering
+A large component of our exploration was the use of clustering to help identify key drivers of log error. Clustering on geographical and continuous features provided insights into which clusters are most impactful, and allowed for the dataframes to be further trimmed to only the most optimal features to use for modeling. 
+
+The main takeaways from exploration are that log error is influenced by: 
+- bathrooms
+- bedrooms
+- squarefeet
+- num_fireplace
+- threequarter_baths
+- logerror (target)
+- age
+- has_pool 
+- tax_delinquency
+- lat_long_cluster (cluster based on latitude and longitude)
+- conts_cluster (cluster based on bathrooms, bedrooms, squarefeet, and age)
+- age_sqft_cluster (cluster based on age and squarefeet)
+- regionidzip (39 unique encoded zip codes)
 
 ### Modeling -- NOT DONE
 We created a number of models that included Ordinary Least Squares (OLS), Lasso & Lars, Polynomial Regression (using LinearRegression), and a Generalized Linear Model (GLM, using TweedieRegressor) types using our selected feature sets. Our report covers the top three performing models with the best performance being the TweedieRegressor. From this model we obtained a **12%** improvement over the baseline, with a **$28,851.55** difference in prediction values. While this does perform better than not having a model, it is not a substantial enough improvement to recommend use for real world applications.
