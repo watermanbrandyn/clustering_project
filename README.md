@@ -38,10 +38,18 @@ To reproduce the outcomes in this project:
 
 ## Initial Questions -- NOT DONE
 _Initial Data Centric Questions_
+1. Do primary house attributes impact log error? (bedrooms, bathrooms, age, squarefeet)
+2. Do secondary house attributes impact log error? (num_fireplace, threequarter_baths, hottub_or_spa, has_pool)
+3. Does geography impact log error? (latitude, longitude, regionidzip, fips)
+4. Can we successfully use any of our features to cluster for log error predictions?
+    - Geographic clustering
+        - Latitude/Longitude
+    - Continuous feature clustering
+5. Does log error being positive or negative arise from any of the features?
 
-_Initial Business Questions_
- 
-_Initial Hypotheses_
+_Initial Hypotheses_ -- NOT DONE
+1. Is there a linear relationship between log error and our continuous features? (Pearsonr)
+2. ...
 
 ## Data Dictionary
 | Attribute                             | Definition                                             | Data Type | Additional Info                 |
@@ -64,7 +72,7 @@ _Initial Hypotheses_
 | conts_cluster                         | Cluster made with bathrooms, bedrooms, age, squarefeet | uint8     | Categorical (3 unique in model) |
 | lat_long_cluster                      | Cluster made with latitude and longitude               | uint8     | Cateogircal (1 unique in model) |
 
-## Project Plan -- NOT DONE
+## Project Plan
 This project will start with some initial planning and question exploration before we even access the data. The question exploration has been delved out in the _Initial Questions_ section. 
 Additionally let us detail what is to be provided at the conclusion of this project:
  - This README.md
@@ -76,20 +84,14 @@ For a more detailed breakdown of these steps please see the Final Report and wor
 
 ### Wrangling 
 This section contains our acquisition and preparation of the data.
-#### Acquire -- NOT DONE
-The acquire.py file contains the code that was used for acquiring the 'zillow' data. There is a **get_db_url()** function that is used to format the credentials for interacting with a SQL server, and the **acquire_zillow()** function that queries the SQL server for the data. For this project Codeup's 'zillow' SQL database was used. The env.py file used, and the credentials within, are not included in this project and as covered under _How To Reproduce_ must be curated with one's own information.
+#### Acquire 
+The wrangle_zillow.py file contains the code that was used for acquiring the Zillow data. There is a **get_db_url()** function that is used to format the credentials for interacting with a SQL server, and the **acquire_zillow()** function that queries the SQL server for the data. For this project Codeup's 'zillow' SQL database was used. The env.py file used, and the credentials within, are not included in this project and as covered under _How To Reproduce_ must be curated with one's own information.
 
-#### Preparation and Splitting -- NOT DONE
-The prepare.py file contains the code that was used for preparing the data. The **prepare_zillow()** function takes the acquired dataframe and cleans it for our exploratory purposes. For this dataset this includes the use of a **remove_outliers()** function, along with a **zillow_split()** function that provides our train, validate, and train dataframes. Although not part of the initial prepare function the **scale_zillow()** function is utilized to scale the data prior to modeling and for the later stages of exploration. 
+#### Preparation and Splitting
+The wrangle_zillow.py file contains the code that was used for preparing the data. The **prepare_zillow()** function takes the acquired dataframe and cleans it for our exploratory purposes. To accomplish this a number of functions from the module are used. Nulls and missing values are identified and removed or imputed as necessary. Outliers are removed to make our work more widely usable, and columns are modified to their appropriate data types or formats. Our intitial dataframe is then split into train, validate, and test splits. 
 
 ### Exploration -- NOT DONE
 For exploration we used only our train dataframe. The explore.py file contains a number of functions that were used to help gain insights into our data, using both visual and statistical methods. We delved out the key factors shown to impact tax value and our train, validate, and test dataframes only include these features. The main takeaways from exploration are that tax value is influenced by:
-- bedrooms
-- bathrooms
-- house_area
-- lot_area
-- age
-- fips
 
 However, the biggest issue found with the Zillow data generally is that a lot of features that could possibly be deemed important were full of too many nulls to be useful in this project.
 
