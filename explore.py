@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Stats
+from scipy import stats
 from scipy.stats import pearsonr
 
 # Sklearn
@@ -139,3 +140,51 @@ def clustering_cols(train, validate, test, cols, k, name):
     centroids = pd.DataFrame(kmeans.cluster_centers_, columns=x.columns)
     return centroids, train, validate, test
 
+
+def run_ttest_list(subset, list_, overall_logerror_mean, i):
+    '''
+    This function takes a subset and a list and determines if the p value is below alpha to dictate statistical significance.
+    If it is it will be appended to the list.
+    '''
+    # Establishing our alpha
+    a = .05
+    # Conducting our t-test
+    t, p = stats.ttest_1samp(subset.logerror, overall_logerror_mean)
+    # Appending to our list if p is below alpha
+    if p < a:
+        list_.append(i)
+
+
+def cluster_trim(list_, name, train, validate, test):
+    '''
+    This function takes a list of significant identifiers, a string name to identify columns to compare to the list, and the train, validate, and test 
+    dataframes. It removes columns from the dataframes if they are not in the list and returns the dataframes. 
+    '''
+    columns = train.columns
+    columns_v = validate.columns
+    columns_t = test.columns
+    # Transforming the list to a str for comparison
+    list_ = [str(x) for x in list_]
+    # Looping through the columns in the train dataframe
+    # If the encoded column is not in the list it is dropped
+    for col in columns:
+        if col.startswith(name):
+            split = col.split('_')
+            if set(split).isdisjoint(set(list_)):
+                train = train.drop(columns=col)
+    # Looping through the columns in the validate dataframe
+    # If the encoded column is not in the list it is dropped
+    for col in columns_v:
+        if col.startswith(name):
+            split = col.split('_')
+            if set(split).isdisjoint(set(list_)):
+                validate = validate.drop(columns=col)
+   # Looping through the columns in the test dataframe
+    # If the encoded column is not in the list it is dropped
+    for col in columns_t:
+        if col.startswith(name):
+            split = col.split('_')
+            if set(split).isdisjoint(set(list_)):
+                test = test.drop(columns=col)
+    # Return our train, validate, and test dataframes
+    return train, validate, test
