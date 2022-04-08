@@ -45,11 +45,12 @@ _Initial Data Centric Questions_
     - Geographic clustering
         - Latitude/Longitude
     - Continuous feature clustering
-5. Does log error being positive or negative arise from any of the features?
+5. What can we identify about the data when log error is positive or negative?
 
 _Initial Hypotheses_ -- NOT DONE
 1. Is there a linear relationship between log error and our continuous features? (Pearsonr)
-2. ...
+2. Is there a difference in the mean log error for selected subsets and the entire dataset? (one-sample t-test)
+3. Is there a difference in the mean log error of particular zip codes and the entire dataset? (one-sample t-test)
 
 ## Data Dictionary
 | Attribute                             | Definition                                             | Data Type | Additional Info                 |
