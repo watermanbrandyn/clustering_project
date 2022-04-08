@@ -220,22 +220,3 @@ def zillow_split(df):
     # Return train, validate, test (56%, 24%, 20% splits of original df)
     return train, validate, test
 
-
-def scale_zillow(train, validate, test):
-    '''
-    This function takes train, validate, and test dataframes and scales their numerical columns that are not
-    the target variable. The scaler is fit on the train and then transformed on all three dataframes. Returns the 
-    three dataframes.
-    '''
-    # Identifying which columns will be scaled
-    quants = ['bedrooms', 'bathrooms', 'house_area', 'lot_area', 'age']
-    # Creation of scaler
-    scaler = MinMaxScaler()
-    # Fit scaler to train
-    scaler.fit(train[quants])
-    # Apply to train, validate, and test dataframes
-    train[quants] = scaler.transform(train[quants])
-    validate[quants] = scaler.transform(validate[quants])
-    test[quants] = scaler.transform(test[quants])
-    # Return the three scaled dataframes
-    return train, validate, 
