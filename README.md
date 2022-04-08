@@ -113,29 +113,30 @@ The main takeaways from exploration are that log error is influenced by:
 - age_sqft_cluster (cluster based on age and squarefeet)
 - regionidzip (39 unique encoded zip codes)
 
-### Modeling -- NOT DONE
-We created a number of models that included Ordinary Least Squares (OLS), Lasso & Lars, Polynomial Regression (using LinearRegression), and a Generalized Linear Model (GLM, using TweedieRegressor) types using our selected feature sets. Our report covers the top three performing models with the best performance being the TweedieRegressor. From this model we obtained a **12%** improvement over the baseline, with a **$28,851.55** difference in prediction values. While this does perform better than not having a model, it is not a substantial enough improvement to recommend use for real world applications.
+### Modeling 
+We created a number of models that included Ordinary Least Squares (OLS), Lasso & Lars, Polynomial Regression (using LinearRegression), and a Generalized Linear Model (GLM, using TweedieRegressor) types using our selected feature sets. Showing the result of all four, the OLS and Tweedie models performed nearly identical, and the Tweedie was selected for use with the test dataframe since it performed the best previously on a regression model to find tax value for a home. Our test ended up performing worse than the baseline, and ultimately only the train data for all of the models beat the baseline. None of the validate data did. 
 
-### Deliverables -- NOT DONE
+### Deliverables 
 The main deliverable from this project are the Final Report. Additionally there are modules that contain the functions used and workbooks where a deeper exploration of the process can be seen.
 
 #### Final Report
 The Final Report can be ran to reproduce the same results from start to finish. 
 
-#### Modules -- NOT DONE
+#### Modules
 The modules included in this project are:
-- acquire.py
-- prepare.py
+- wrangle_zillow.py
 - explore.py
 - modeling.py
 
-#### Predictions -- NOT DONE
+#### Predictions
 The modeling.py module could be used/modified to show predictions and contains functions that alter the train, validate, and test dataframes to store the outcomes from the models. More specifically the y component (target variable) has the predictions added to their respective dataframes.
 
-### Summary and Recommendations -- NOT DONE
-We were successful at identifying some key drivers that influence tax value, but do not feel that these features alone are enough to create a useful model. The source data has far too many nulls to make use of features that could possibly be deemed important. Among these are all of the add-on components of a house (such as pool, type of cooling/heating, etc...) or more specific locational data that are known to be important in determining the value of a house. 
+### Summary and Recommendations
+Ultimately we were not successful in identifying drivers that were capable of creating a useful, or even superior, regression model to that of a baseline guess. While we were able to gather features that were deemed statistically significant enough to use for modeling, they were not able to result in a model that could be utilized by Zillow. 
 
-Moving forward the recommendation is that Zillow work on fixing their gaps in data prior to attempts at creating useful models out of it. If this is not a possibility one could spend a large amount of time trying to impute, modify, or curate those gaps for them but this does not seem like the best route to take. In this instance data acquisition, at the source, is causing a bottle-neck in terms of possible utilities and opportunities.
+The first recommendation I would provide is to gather better, or correct the available data. There are a lot of issues with the utility of the data as it currently sits on the SQL server, but utltimately new features are needed to provide a model that obtains the goals set out in the project. While house features may contribute enough to the value of a house to be used successfully to predict value (Regression Project prior to this project), they are not useful enough in predicting the log error produced by Zillow for predicting said value. Perhaps for this data that centers around the 'hidden' bonuses of a house should be gathered, such as proximity to schools, quality of nearby businesses, and if there is or is not an HOA. (As some examples)
+
+Moving forward one could spend more time with the data that is currently available but a better solution is probably to work to obtain features that are not currently present. 
 
 
 
